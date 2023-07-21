@@ -44,10 +44,27 @@ class ApiAuthController extends Controller
             ]);
         }
 
-        return $request->user()->createToken("android");
+        return $request->user()->createToken("android")->plainTextToken;
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            "message" => "logout successfully",
+        ]);
+    }
+
+    public function logoutAll(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response()->json([
+            "message" => "logout from all devices successfully",
+        ]);
+    }
+
+    public function devices(Request $request)
+    {
+        return $request->user()->tokens;
     }
 }
