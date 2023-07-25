@@ -7,6 +7,7 @@ use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate as FacadesGate;
 
 class ContactController extends Controller
 {
@@ -62,7 +63,17 @@ class ContactController extends Controller
             ], 404);
         }
 
+        // false APP_DEBUG from .env
+        // $this->authorize('view',$contact);
 
+        // show message manually
+        if (FacadesGate::denies('view', $contact)) {
+            return response()->json([
+                // "success" => false,
+                "message" => "You are not allowed",
+
+            ], 403);
+        }
         // SHOW DATA USING REGULAR WAY
         // return response()->json([
         //     "data" => $contact
@@ -91,6 +102,14 @@ class ContactController extends Controller
                 "message" => "Contact not found",
 
             ], 404);
+        }
+
+        if (FacadesGate::denies('update', $contact)) {
+            return response()->json([
+                // "success" => false,
+                "message" => "You are not allowed",
+
+            ], 403);
         }
 
         // $contact->update([
@@ -130,6 +149,14 @@ class ContactController extends Controller
                 "message" => "Contact not found",
 
             ], 404);
+        }
+
+        if (FacadesGate::denies('delete', $contact)) {
+            return response()->json([
+                // "success" => false,
+                "message" => "You are not allowed",
+
+            ], 403);
         }
         $contact->delete();
 
